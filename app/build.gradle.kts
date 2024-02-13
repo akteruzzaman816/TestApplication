@@ -46,4 +46,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation(project(":testlibrary"))
+
+    // admob
+    implementation ("com.google.android.gms:play-services-ads:22.6.0")
 }
