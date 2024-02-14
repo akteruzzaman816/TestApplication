@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "title": "Banner 1",
+      "imageMobile": "https://marketplace.canva.com/EAFKuV12aEA/1/0/1600w/canva-orange-and-yellow-vibrant-shoe-sale-mobile-banner-yuUYhVOB8b0.jpg",
+      "imageDesktop": "https://laz-img-cdn.alicdn.com/images/ims-web/TB1LLFTsljTBKNjSZFuXXb0HFXa.jpg_1200x1200.jpg"
+    },
+    {
+      "title": "Banner 2",
+      "imageMobile": "https://developers.google.com/static/admob/images/android-testad-0-admob.png",
+      "imageDesktop": "https://laz-img-cdn.alicdn.com/images/ims-web/TB1LLFTsljTBKNjSZFuXXb0HFXa.jpg_1200x1200.jpg"
+    },
+    {
+      "title": "Banner 3",
+      "imageMobile": "https://laz-img-cdn.alicdn.com/images/ims-web/TB1LLFTsljTBKNjSZFuXXb0HFXa.jpg_1200x1200.jpg",
+      "imageDesktop": "https://laz-img-cdn.alicdn.com/images/ims-web/TB1LLFTsljTBKNjSZFuXXb0HFXa.jpg_1200x1200.jpg"
+    },
+    {
+      "title": "Banner 4",
+      "imageMobile": "https://laz-img-cdn.alicdn.com/images/ims-web/TB1LLFTsljTBKNjSZFuXXb0HFXa.jpg_1200x1200.jpg",
+      "imageDesktop": "https://laz-img-cdn.alicdn.com/images/ims-web/TB1LLFTsljTBKNjSZFuXXb0HFXa.jpg_1200x1200.jpg"
+    }
+  ]
+}

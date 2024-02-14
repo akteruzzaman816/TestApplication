@@ -47,6 +47,4 @@ dependencies {
 
     implementation(project(":testlibrary"))
 
-    // admob
-    implementation ("com.google.android.gms:play-services-ads:22.6.0")
 }
