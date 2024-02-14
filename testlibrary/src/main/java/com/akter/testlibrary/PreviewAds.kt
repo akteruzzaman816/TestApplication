@@ -37,7 +37,6 @@ class PreviewAds(context: Context, attrs: AttributeSet? = null) : AppCompatImage
         CoroutineScope(Dispatchers.Main).launch{
             this@PreviewAds.let {
                 Glide.with(context).load(data?.data?.get(adType)?.imageMobile).into(it)
-               // layoutParams = LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT)
                 adjustViewBounds = true
             }
         }

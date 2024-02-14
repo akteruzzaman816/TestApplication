@@ -11,13 +11,12 @@ import retrofit2.http.Path
 class HttpClient {
     companion object {
         private var instance : RetrofitApi? = null
-
         @Synchronized
         fun getInstance(): RetrofitApi {
             if (instance == null)
                 instance = Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create())
-                    .baseUrl("https://gist.githubusercontent.com/")
+                    .baseUrl("https://raw.githubusercontent.com/")
                     .build()
                     .create(RetrofitApi::class.java)
             return instance as RetrofitApi
@@ -26,7 +25,7 @@ class HttpClient {
 }
 
 interface RetrofitApi {
-    @GET("poepanda/d23d18e6ad897e34e7a696122ce0ca5a/raw/9bcd11a2a96080dba4a9c43c9428fc4c266105c9/fake-api-banner.json")
+    @GET("akteruzzaman816/TestApplication/master/fake_api.json")
     suspend fun getData() : Response<AdModelResponse>
 
 }
