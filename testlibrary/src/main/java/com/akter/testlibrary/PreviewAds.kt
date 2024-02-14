@@ -21,7 +21,7 @@ class PreviewAds(context: Context, attrs: AttributeSet? = null) : AppCompatImage
         val typeArray = context.obtainStyledAttributes(attrs, R.styleable.PreviewAds)
         adType = typeArray.getInt(R.styleable.PreviewAds_ad_type,1)
         makeApiCallForAdds()
-        getApplicationMetadata()
+        //getApplicationMetadata()
     }
     private fun makeApiCallForAdds() {
         CoroutineScope(Dispatchers.IO).launch {
