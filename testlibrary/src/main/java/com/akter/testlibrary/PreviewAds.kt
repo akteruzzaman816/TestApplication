@@ -19,7 +19,7 @@ class PreviewAds(context: Context, attrs: AttributeSet? = null) : AppCompatImage
 
     init {
         val typeArray = context.obtainStyledAttributes(attrs, R.styleable.PreviewAds)
-        adType = typeArray.getInt(R.styleable.PreviewAds_ad_type,1)
+        adType = typeArray.getInt(R.styleable.PreviewAds_adUnitId,1)
         makeApiCallForAdds()
         //getApplicationMetadata()
     }

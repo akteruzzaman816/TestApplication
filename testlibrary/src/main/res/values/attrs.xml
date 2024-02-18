@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="PreviewAds">
-        <attr name="ad_type" format="integer"/>
+        <attr name="adUnitId" format="integer"/>
     </declare-styleable>
 </resources>
