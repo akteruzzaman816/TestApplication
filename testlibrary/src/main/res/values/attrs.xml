@@ -3,4 +3,8 @@
     <declare-styleable name="PreviewAds">
         <attr name="adUnitId" format="integer"/>
     </declare-styleable>
+
+    <declare-styleable name="AdfinixAds">
+        <attr name="adSlotId" format="integer"/>
+    </declare-styleable>
 </resources>
