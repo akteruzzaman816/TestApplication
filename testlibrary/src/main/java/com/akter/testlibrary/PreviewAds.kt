@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.util.AttributeSet
 import android.util.Log
-import android.view.ViewGroup.LayoutParams
 import androidx.appcompat.widget.AppCompatImageView
 import com.akter.testlibrary.model.AdModelResponse
 import com.bumptech.glide.Glide

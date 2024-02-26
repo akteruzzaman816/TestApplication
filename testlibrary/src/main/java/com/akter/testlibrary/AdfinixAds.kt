@@ -4,70 +4,64 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Rect
 import android.net.Uri
 import android.util.AttributeSet
 import android.util.Log
-import android.view.LayoutInflater
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.LinearLayout
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import com.akter.testlibrary.Adfinix.TAG
 
 
-class AdfinixAds(context: Context, attrs: AttributeSet? = null) : LinearLayout(context) {
-    private var adType:Int = 0
+class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context,attrs){
+
     init {
         initialize(attrs)
     }
 
+    private var adType:Int = 0
+    private var initialUrl = ""
+
     @SuppressLint("SetJavaScriptEnabled", "Recycle", "CustomViewStyleable")
     fun initialize(attrs: AttributeSet?) {
-        // ad type
+        /** ad types **/
         val typeArray = context.obtainStyledAttributes(attrs, R.styleable.AdfinixAds)
-        adType = typeArray.getInt(R.styleable.AdfinixAds_adSlotId,0)
+        adType = typeArray.getInt(R.styleable.AdfinixAds_adSlotId,1)
 
-        // inflate ad views
-        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        inflater.inflate(R.layout.layout_preview, this)
-
-        // ad views setup
-        val adView = findViewById<WebView>(R.id.ad_view)
-        adView.apply {
-            isVisible = false
-            handleViewEvents(adView)
-            settings.javaScriptEnabled = true
-            isVerticalScrollBarEnabled = false
-            isHorizontalScrollBarEnabled = false
-            layoutParams = LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT)
-            settings.loadWithOverviewMode = true
-            settings.useWideViewPort = true
-
-            loadCustomAd(adView)
-        }
+        /** handle events **/
+        handleViewEvents()
+        loadCustomAd()
     }
 
-    private fun loadCustomAd(adView: WebView?) {
+
+    private fun loadCustomAd() {
         when(adType){
-            0 -> adView?.loadUrl(Adfinix.adUrls[0])
-            1 -> adView?.loadUrl(Adfinix.adUrls[1])
-            2 -> adView?.loadUrl(Adfinix.adUrls[2])
-            3 -> adView?.loadUrl(Adfinix.adUrls[3])
+            0 -> loadUrl(Adfinix.adUrls[0])
+            1 -> loadUrl(Adfinix.adUrls[1])
+            2 -> loadUrl(Adfinix.adUrls[2])
+            3 -> loadUrl(Adfinix.adUrls[3])
         }
     }
 
-    private fun handleViewEvents(adfinixAds: WebView) {
-        adfinixAds.webViewClient = object : WebViewClient() {
+    private fun handleViewEvents() {
+        webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                adfinixAds.isVisible = false
-                Log.d(TAG, "onPageStarted: ")
+                if (initialUrl != url && initialUrl.isNotEmpty()){
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    context.startActivity(intent)
+                    loadUrl(initialUrl)
+                }
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
-                adfinixAds.isVisible = true
-                Log.d(TAG, "onPageFinished: ")
+                isVisible = true
             }
 
             override fun onReceivedError(
@@ -76,25 +70,36 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) : LinearLayout(c
                 error: WebResourceError?
             ) {
                 super.onReceivedError(view, request, error)
-                adfinixAds.isVisible = false
+                loadUrl(initialUrl)
                 Log.d(TAG, "onReceivedError:${error?.description}")
-                Log.d(TAG, "onReceivedError:${error}")
             }
+
 
             override fun shouldOverrideUrlLoading(
                 view: WebView?,
                 request: WebResourceRequest?
             ): Boolean {
-                Log.d(TAG, "shouldOverrideUrlLoading: ${view?.url}")
-                if (view?.url != null && view.url?.startsWith("http") == true) {
-                    view.context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(view.url)))
-                    return true
-                }
-                return false
+                initialUrl = view?.url ?:""
+                Log.d(TAG, "shouldOverrideUrlLoading: $initialUrl")
+                return super.shouldOverrideUrlLoading(view, request)
             }
+
         }
     }
 
+
+    @SuppressLint("DrawAllocation")
+    override fun onDraw(canvas: Canvas) {
+        if (isInEditMode.not()) {
+            super.onDraw(canvas)
+            return
+        }
+        canvas.drawColor(Color.WHITE)
+        val bitmap = ResourcesCompat.getDrawable(resources, R.drawable.logo, null)!!.toBitmap()
+        val size = minOf(width, height) / 2
+        val rect = Rect((width - size) / 2, (height - size) / 2, (width + size) / 2, (height + size) / 2)
+        canvas.drawBitmap(bitmap, null, rect, null)
+    }
 
 
 }
