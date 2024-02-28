@@ -14,7 +14,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // setup for ads
-        Adfinix.initialize(binding.testakakakkakakak)
+        Adfinix.initialize(binding.adView1)
+        Adfinix.initialize(binding.adView2)
 
     }
 }

@@ -6,5 +6,6 @@
 
     <declare-styleable name="AdfinixAds">
         <attr name="adSlotId" format="integer"/>
+        <attr name="adSiteId" format="integer"/>
     </declare-styleable>
 </resources>

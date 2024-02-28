@@ -18,6 +18,15 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import com.akter.testlibrary.Adfinix.TAG
+import com.akter.testlibrary.model.BrowserInfo
+import com.akter.testlibrary.model.Cookies
+import com.akter.testlibrary.model.ModelAdRequest
+import com.akter.testlibrary.model.ModelAdResponse
+import com.akter.testlibrary.model.SlotInfo
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context,attrs){
@@ -26,29 +35,30 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
         initialize(attrs)
     }
 
-    private var adType:Int = 0
+    private var slotID:Int = 0
+    private var siteID:Int = 0
     private var initialUrl = ""
 
     @SuppressLint("SetJavaScriptEnabled", "Recycle", "CustomViewStyleable")
     fun initialize(attrs: AttributeSet?) {
+
         /** ad types **/
         val typeArray = context.obtainStyledAttributes(attrs, R.styleable.AdfinixAds)
-        adType = typeArray.getInt(R.styleable.AdfinixAds_adSlotId,1)
+        slotID = typeArray.getInt(R.styleable.AdfinixAds_adSlotId,0)
+
+        /** side id **/
+        siteID = typeArray.getInt(R.styleable.AdfinixAds_adSiteId,0)
+
+        if (slotID != 0 && siteID != 0){
+            //request for new ads
+            makeApiCallForAdds()
+        }
 
         /** handle events **/
         handleViewEvents()
-        loadCustomAd()
     }
 
 
-    private fun loadCustomAd() {
-        when(adType){
-            0 -> loadUrl(Adfinix.adUrls[0])
-            1 -> loadUrl(Adfinix.adUrls[1])
-            2 -> loadUrl(Adfinix.adUrls[2])
-            3 -> loadUrl(Adfinix.adUrls[3])
-        }
-    }
 
     private fun handleViewEvents() {
         webViewClient = object : WebViewClient() {
@@ -70,7 +80,6 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
                 error: WebResourceError?
             ) {
                 super.onReceivedError(view, request, error)
-                loadUrl(initialUrl)
                 Log.d(TAG, "onReceivedError:${error?.description}")
             }
 
@@ -84,6 +93,25 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
                 return super.shouldOverrideUrlLoading(view, request)
             }
 
+        }
+    }
+
+    private fun makeApiCallForAdds() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = HttpClient.getInstance().getAdData(makeRequest())
+            if (response.isSuccessful){
+                loadAds(response.body())
+            }
+            Log.d(TAG, "response_data: ${Gson().toJson(response.body())}")
+        }
+    }
+
+    private fun loadAds(body: ModelAdResponse?) {
+        body?.advertizement?.adString?.let {
+            // show ads
+            CoroutineScope(Dispatchers.Main).launch {
+                loadUrl(it)
+            }
         }
     }
 
@@ -101,5 +129,12 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
         canvas.drawBitmap(bitmap, null, rect, null)
     }
 
+    private fun makeRequest() : ModelAdRequest{
+        val browserInfo = Gson().fromJson(Adfinix.browserInfo, BrowserInfo::class.java)
+        val cookies = Gson().fromJson(Adfinix.cookies, Cookies::class.java)
+        val req = ModelAdRequest(browserInfo,cookies, SlotInfo("",false,siteID,slotID,"adfinix.xyz"))
+        Log.d(TAG, "ad_request_body: ${Gson().toJson(req)}")
+        return req
+    }
 
 }
