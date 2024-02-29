@@ -19,7 +19,7 @@
         tools:ignore="HardcodedText" />
 
     <com.akter.testlibrary.AdfinixAds
-        app:adSlotId="183"
+        app:adSlotId="160"
         app:adSiteId="36"
         android:id="@+id/ad_view_1"
         android:layout_width="match_parent"

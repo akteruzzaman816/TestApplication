@@ -14,7 +14,6 @@ object Adfinix {
                 loadWithOverviewMode = true
                 useWideViewPort = true
                 javaScriptEnabled = true
-                setInitialScale(110)
             }
         }
     }
