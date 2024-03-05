@@ -3,6 +3,7 @@ package com.akter.testlibrary
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -45,17 +46,25 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
         /** ad types **/
         val typeArray = context.obtainStyledAttributes(attrs, R.styleable.AdfinixAds)
         slotID = typeArray.getInt(R.styleable.AdfinixAds_adSlotId,0)
-
         /** side id **/
-        siteID = typeArray.getInt(R.styleable.AdfinixAds_adSiteId,0)
+        siteID = getApplicationSiteID() ?: 0
 
         if (slotID != 0 && siteID != 0){
             //request for new ads
             makeApiCallForAdds()
         }
 
+
         /** handle events **/
         handleViewEvents()
+    }
+
+    fun setupSlotID(id:Int) {
+        slotID = id
+        if (slotID != 0 && siteID != 0){
+            //request for new ads
+            makeApiCallForAdds()
+        }
     }
 
 
@@ -135,6 +144,22 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
         val req = ModelAdRequest(browserInfo,cookies, SlotInfo("",false,siteID,slotID,"adfinix.xyz"))
         Log.d(TAG, "ad_request_body: ${Gson().toJson(req)}")
         return req
+    }
+
+    private fun getApplicationSiteID():Int? {
+        return try {
+            val packageManager = context.packageManager
+            val packageInfo = packageManager.getPackageInfo(context.packageName, PackageManager.GET_META_DATA)
+            // Accessing metadata values
+            val metaData = packageInfo.applicationInfo.metaData
+            val metadataValue = metaData.getInt(TestLibraryConstants.ACCOUNT_KEY_NAME)
+            Log.d(TAG, "getApplicationSiteID: $metadataValue")
+            metadataValue
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+            0
+        }
+
     }
 
 }

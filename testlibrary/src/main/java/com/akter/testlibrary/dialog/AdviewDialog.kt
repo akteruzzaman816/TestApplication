@@ -2,44 +2,37 @@ package com.akter.testlibrary.dialog
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.DialogFragment
 import com.akter.testlibrary.Adfinix
+import com.akter.testlibrary.R
 import com.akter.testlibrary.databinding.LayoutAdviewDialogBinding
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-class AdviewDialog(context: Context) : DialogFragment() {
+class AdviewDialog(context: Context,private val slotID:Int){
 
-
-    private val binding = LayoutAdviewDialogBinding.inflate(LayoutInflater.from(context), null, false).apply {
-        Adfinix.initialize(adView1)
-    }
+    private val binding = LayoutAdviewDialogBinding.inflate(LayoutInflater.from(context), null, false)
     private val dialog: AlertDialog
 
     init {
-        MaterialAlertDialogBuilder(context,android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen).apply {
-            //background = ContextCompat.getDrawable(context)
+        AlertDialog.Builder(context, R.style.full_screen_ads).apply {
             dialog = create().apply {
+                this.setCancelable(true)
                 setView(binding.root)
-                window?.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
             }
         }
+        setUpAds()
+    }
 
+    private fun setUpAds() = with(binding){
+        adView.setupSlotID(slotID)
+        Adfinix.initialize(adView)
     }
 
     fun show() {
         if (!dialog.isShowing) dialog.show()
     }
 
-    fun dismiss() {
+    private fun dismiss() {
         if (dialog.isShowing) dialog.dismiss()
-    }
-
-
-
-    interface OnClickListener {
-        fun onClick()
     }
 
 }

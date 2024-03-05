@@ -10,13 +10,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
         android:theme="@style/Theme.MyApplication"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
         <meta-data
-            android:name="com.akter.testlibrary"
-            android:value="secret_key_123456" />
+            android:name="com.adfinix.site_id"
+            android:value="36" />
 
         <activity
             android:name=".MainActivity"

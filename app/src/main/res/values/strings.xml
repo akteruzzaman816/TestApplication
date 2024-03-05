@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="adfinix_site_id" translatable="false">36</string>
 </resources>

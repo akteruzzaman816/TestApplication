@@ -21,7 +21,7 @@ object Adfinix {
 
     // show full screen ad
     fun showFullScreenAds(context: Context, slotID:Int){
-        AdviewDialog(context).show()
+        AdviewDialog(context,slotID).show()
     }
 
     // dummy data
