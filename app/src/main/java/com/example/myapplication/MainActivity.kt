@@ -15,7 +15,10 @@ class MainActivity : AppCompatActivity() {
 
         // setup for ads
         Adfinix.initialize(binding.adView1)
-        Adfinix.initialize(binding.adView2)
+
+        binding.textView.setOnClickListener {
+            Adfinix.showFullScreenAds(this,160)
+        }
 
     }
 }

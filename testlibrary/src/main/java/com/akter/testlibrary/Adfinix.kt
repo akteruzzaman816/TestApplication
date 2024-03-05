@@ -1,10 +1,11 @@
 package com.akter.testlibrary
 
 import android.annotation.SuppressLint
+import android.content.Context
+import com.akter.testlibrary.dialog.AdviewDialog
 
 object Adfinix {
     const val TAG = "#X_"
-
     @SuppressLint("SetJavaScriptEnabled")
     fun initialize(adfinixAds: AdfinixAds) {
         adfinixAds.apply {
@@ -16,6 +17,11 @@ object Adfinix {
                 javaScriptEnabled = true
             }
         }
+    }
+
+    // show full screen ad
+    fun showFullScreenAds(context: Context, slotID:Int){
+        AdviewDialog(context).show()
     }
 
     // dummy data
