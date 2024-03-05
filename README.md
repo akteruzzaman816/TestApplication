@@ -20,6 +20,7 @@ Step 2. Add the dependency
 
 
  Step 3. Add data to the manifest
+ 
          <meta-data
              android:name="com.adfinix.site_id"
              android:value="your_publisher_id" />
