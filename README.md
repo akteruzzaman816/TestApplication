@@ -18,10 +18,11 @@ Step 2. Add the dependency
 	        implementation 'com.github.akteruzzaman816:TestApplication:1.0.4'
 	}
 
+
  Step 3. Add data to the manifest
          <meta-data
-            android:name="com.adfinix.site_id"
-            android:value="your_publisher_id" />
+             android:name="com.adfinix.site_id"
+             android:value="your_publisher_id" />
 
 
 ### Usage
