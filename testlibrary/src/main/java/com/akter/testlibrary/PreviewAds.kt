@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.util.Log
 import androidx.appcompat.widget.AppCompatImageView
 import com.akter.testlibrary.model.AdModelResponse
+import com.akter.testlibrary.utils.TestLibraryConstants
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

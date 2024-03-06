@@ -39,6 +39,10 @@ data class AdCookies(
     val adsId: Int?,
     @SerializedName("Expire")
     val expire: Long?,
+    @SerializedName("last_ad_served")
+    var lastAdServed: Long?,
+    @SerializedName("ad_served")
+    var adServed: Int? = 0,
     @SerializedName("FlagPole")
     val flagPole: String?
 ) : Serializable
