@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         Adfinix.initialize(binding.adView1)
 
         binding.textView.setOnClickListener {
-            Adfinix.showFullScreenAds(this,160)
+            Adfinix.showFullScreenAds(this,184)
         }
 
     }

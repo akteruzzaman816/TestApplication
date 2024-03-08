@@ -127,7 +127,11 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
         body?.advertizement?.adString?.let {
             // show ads
             CoroutineScope(Dispatchers.Main).launch {
-                loadUrl(it)
+                if (TestLibraryConstants.validateUrl(it)) loadUrl(it)
+                else if (it.isNotEmpty()){
+                   val injectUrl = TestLibraryConstants.injectHtml(it)
+                    loadDataWithBaseURL(null, injectUrl, "text/html", "UTF-8", null)
+                }
             }
         }
 
