@@ -18,6 +18,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import com.akter.testlibrary.Adfinix.TAG
+import com.akter.testlibrary.model.ModelAdActionRequest
 import com.akter.testlibrary.model.ModelAdRequest
 import com.akter.testlibrary.model.ModelAdResponse
 import com.akter.testlibrary.model.SlotInfo
@@ -36,6 +37,7 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
     }
 
     private var slotID:Int = 0
+    private var authID = ""
     private var siteID:Int = 0
     private var initialUrl = ""
 
@@ -75,6 +77,7 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
         webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 if (initialUrl != url && initialUrl.isNotEmpty()){
+                    makeApiCallForADClick()
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                     context.startActivity(intent)
                     loadUrl(initialUrl)
@@ -82,6 +85,7 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
+                makeApiCallForADView()
                 isVisible = true
             }
 
@@ -121,6 +125,31 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
         }
     }
 
+    private fun makeApiCallForADClick() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val id = ModelAdActionRequest(authID)
+                val response = HttpClient.getInstance().adClicked(id)
+                Log.d(TAG, "ad_click_response_data: ${Gson().toJson(response.body())}")
+            }catch (e:Exception){
+                Log.d(TAG, "makeApiCallForADClick: _exception ${e.message}")
+            }
+        }
+    }
+
+    private fun makeApiCallForADView() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val id = ModelAdActionRequest(authID)
+                val response = HttpClient.getInstance().adViewed(id)
+                Log.d(TAG, "ad_view_response_data: ${Gson().toJson(response.body())}")
+            }catch (e:Exception){
+                Log.d(TAG, "makeApiCallForADView: _exception ${e.message}")
+            }
+        }
+    }
+
+
     private fun loadAds(body: ModelAdResponse?) {
         body?.advertizement?.adString?.let {
             // show ads
@@ -135,6 +164,9 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
 
         // save cookie
         Adfinix.saveCookiesData(body?.cookies)
+
+        // save authid
+        authID = body?.token ?:""
 
 
     }
@@ -153,6 +185,7 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
     }
 
     private fun makeRequest() : ModelAdRequest{
+
         val req = ModelAdRequest(Adfinix.deviceInfo,Adfinix.getCookiesData(), SlotInfo("",false,siteID,slotID,"adfinix.xyz"))
         Log.d(TAG, "ad_request_body: ${Gson().toJson(req)}")
         return req

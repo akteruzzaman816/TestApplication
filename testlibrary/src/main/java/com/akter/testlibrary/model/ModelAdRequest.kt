@@ -12,7 +12,7 @@ data class ModelAdRequest(
     @SerializedName("browserInfo")
     val browserInfo: BrowserInfo?,
     @SerializedName("cookies")
-    val cookies: AdRequestCookies?,
+    val cookies: Map<String, MutableMap<String, Map<String, Any?>>>?,
     @SerializedName("slotInfo")
     val slotInfo: SlotInfo?
 ) : Serializable
