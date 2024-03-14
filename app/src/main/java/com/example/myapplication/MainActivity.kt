@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // setup for ads
-        Adfinix.initialize(binding.adView1)
+        Adfinix.showAds(binding.adView1)
 
         binding.textView.setOnClickListener {
             Adfinix.showFullScreenAds(this,184)

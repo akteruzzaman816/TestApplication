@@ -3,7 +3,6 @@ package com.akter.testlibrary
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -32,7 +31,6 @@ import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.math.log
 
 
 class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context,attrs){
@@ -52,7 +50,7 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
         val typeArray = context.obtainStyledAttributes(attrs, R.styleable.AdfinixAds)
         slotID = typeArray.getInt(R.styleable.AdfinixAds_adSlotId,0)
         /** side id **/
-        siteID = getApplicationSiteID() ?: 0
+        siteID = Adfinix.siteID ?: 0
 
         if (slotID != 0 && siteID != 0){
             //request for new ads
@@ -199,20 +197,5 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
         return req
     }
 
-    private fun getApplicationSiteID():Int? {
-        return try {
-            val packageManager = context.packageManager
-            val packageInfo = packageManager.getPackageInfo(context.packageName, PackageManager.GET_META_DATA)
-            // Accessing metadata values
-            val metaData = packageInfo.applicationInfo.metaData
-            val metadataValue = metaData.getInt(TestLibraryConstants.ACCOUNT_KEY_NAME)
-            Log.d(TAG, "getApplicationSiteID: $metadataValue")
-            metadataValue
-        } catch (e: PackageManager.NameNotFoundException) {
-            e.printStackTrace()
-            0
-        }
-
-    }
 
 }

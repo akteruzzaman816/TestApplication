@@ -26,7 +26,7 @@ class AdviewDialog(private val context: Context,private val slotID:Int){
 
     private fun setUpAds() = with(binding){
         adView.setupSlotID(slotID)
-        Adfinix.initialize(adView)
+        Adfinix.showAds(adView)
 
         // setup (height / width) of view
         val width: Int = context.resources.displayMetrics.widthPixels

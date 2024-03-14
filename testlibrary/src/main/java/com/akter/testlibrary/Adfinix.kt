@@ -3,11 +3,22 @@ package com.akter.testlibrary
 import android.annotation.SuppressLint
 import android.content.Context
 import com.akter.testlibrary.dialog.AdviewDialog
+import com.akter.testlibrary.utils.AdfinixAdType
 
 object Adfinix {
-    const val TAG = "#X_"
+    internal const val TAG = "#X_"
+    internal var siteID:Int? = null
+    internal var adType:AdfinixAdType? = null
+
+    fun initialize(siteID:Int,adType:AdfinixAdType){
+        this.siteID = siteID
+        this.adType = adType
+    }
+
+
     @SuppressLint("SetJavaScriptEnabled")
-    fun initialize(adfinixAds: AdfinixAds) {
+    // show banner ads
+    fun showAds(adfinixAds: AdfinixAds) {
         adfinixAds.apply {
             isVerticalScrollBarEnabled = false
             isHorizontalScrollBarEnabled = false
@@ -21,7 +32,8 @@ object Adfinix {
 
     // show full screen ad
     fun showFullScreenAds(context: Context, slotID:Int){
-        AdviewDialog(context,slotID).show()
+        if (siteID != null)AdviewDialog(context,slotID).show()
+        else throw Exception("showFullScreenAds: please do Adfinix initial setup")
     }
 
     // dummy data
