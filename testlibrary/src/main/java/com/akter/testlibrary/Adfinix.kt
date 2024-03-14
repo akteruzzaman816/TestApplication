@@ -2,17 +2,40 @@ package com.akter.testlibrary
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
+import android.telephony.TelephonyManager
+import android.util.DisplayMetrics
+import android.util.Log
+import android.view.WindowManager
 import com.akter.testlibrary.dialog.AdviewDialog
+import com.akter.testlibrary.model.AdRequestCookies
+import com.akter.testlibrary.model.BrowserInfo
+import com.akter.testlibrary.model.Cookies
+import com.akter.testlibrary.model.CookiesData
 import com.akter.testlibrary.utils.AdfinixAdType
+import com.akter.testlibrary.utils.SharedPref
+import com.akter.testlibrary.utils.TestLibraryConstants
+import com.akter.testlibrary.utils.TestLibraryConstants.fromJsonList
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import org.json.JSONObject
 
 object Adfinix {
     internal const val TAG = "#X_"
-    internal var siteID:Int? = null
-    internal var adType:AdfinixAdType? = null
+    internal var siteID: Int? = null
+    internal var adType: AdfinixAdType? = null
+    internal var cookieList: MutableList<Cookies>? = null
+    private var screenSize = ""
+    private var networkType = ""
+    internal val deviceInfo = getDeviceInfo()
 
-    fun initialize(siteID:Int,adType:AdfinixAdType){
+    fun initialize(context: Context, siteID: Int, adType: AdfinixAdType) {
         this.siteID = siteID
         this.adType = adType
+        SharedPref.init(context)
+        getScreenInfo(context)
+        cookieList = Gson().fromJsonList(SharedPref.read(TestLibraryConstants.CACHE_DATA,"") ?:"")
+        Log.d(TAG, "initialize: $cookieList")
     }
 
 
@@ -31,43 +54,102 @@ object Adfinix {
     }
 
     // show full screen ad
-    fun showFullScreenAds(context: Context, slotID:Int){
-        if (siteID != null)AdviewDialog(context,slotID).show()
+    fun showFullScreenAds(context: Context, slotID: Int) {
+        if (siteID != null) AdviewDialog(context, slotID).show()
         else throw Exception("showFullScreenAds: please do Adfinix initial setup")
     }
 
-    // dummy data
-    val cookies = "{\n" +
-            "\t\t\"adgroups\": {\n" +
-            "\t\t\t\"193\": {\n" +
-            "\t\t\t\t\"adgroup_id\": 193,\n" +
-            "\t\t\t\t\"last_ad_served\": 1705226851121,\n" +
-            "\t\t\t\t\"ad_served\": 2,\n" +
-            "\t\t\t\t\"expire\": 1705226850722204400\n" +
-            "\t\t\t},\n" +
-            "\t\t\t\"211\": {\n" +
-            "\t\t\t\t\"adgroup_id\": 211,\n" +
-            "\t\t\t\t\"last_ad_served\": 1705227567058,\n" +
-            "\t\t\t\t\"ad_served\": 15,\n" +
-            "\t\t\t\t\"expire\": 1705227566944194600\n" +
-            "\t\t\t}\n" +
-            "\t\t},\n" +
-            "\t\t\"format\": \"impression\",\n" +
-            "\t\t\"unique_user_key\": null\n" +
-            "\t}"
+    fun saveCookiesData(cookies: Cookies?) {
+        var cookiesFound = false
+        cookies?.let {  cookieData ->
+            cookieList?.let {
+                for (item in it){
+                    if (cookieData.adGroupId == item.adGroupId){
+                        item.adServed = item.adServed?.plus(1)
+                        item.lastAdServed = cookieData.lastAdServed
+                        cookiesFound = true
+                    }
+                }
 
-    val browserInfo = "{\n" +
-            "\t\t\"screen\": \"1536 x 864\",\n" +
-            "\t\t\"browser\": \"Chrome\",\n" +
-            "\t\t\"browserVersion\": 120,\n" +
-            "\t\t\"mobile\": \"no\",\n" +
-            "\t\t\"os\": \"Linux\",\n" +
-            "\t\t\"device_model\": \"Unknown\",\n" +
-            "\t\t\"device_type\": \"Unknown\",\n" +
-            "\t\t\"device_vendor\": \"Unknown\",\n" +
-            "\t\t\"osVersion\": \"Unknown\",\n" +
-            "\t\t\"cookies\": true,\n" +
-            "\t\t\"useragent\": \"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36\",\n" +
-            "\t\t\"connection_status\": \"4g\"\n" +
-            "\t}"
+                // if not found ad new cookies
+                if (!cookiesFound){
+                    cookieData.lastAdServed = cookieData.expire
+                    cookieData.adServed = 0
+                    cookieList?.add(cookieData)
+                }
+
+                // save all the data to cache
+                SharedPref.write(TestLibraryConstants.CACHE_DATA,Gson().toJson(cookieList))
+
+            }
+        }
+
+    }
+
+    private fun getScreenInfo(context: Context) {
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        displayMetrics.density
+        val widthPixels = displayMetrics.widthPixels
+        val heightPixels = displayMetrics.heightPixels
+        displayMetrics.densityDpi
+
+        screenSize = "$widthPixels x $heightPixels"
+    }
+
+    @SuppressLint("MissingPermission")
+    fun getInternetConnectionType(context: Context) {
+        val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        val type = telephonyManager.networkType
+
+        networkType =  when (type) {
+            TelephonyManager.NETWORK_TYPE_UNKNOWN -> "Unknown"
+            TelephonyManager.NETWORK_TYPE_GPRS, TelephonyManager.NETWORK_TYPE_EDGE, TelephonyManager.NETWORK_TYPE_CDMA, TelephonyManager.NETWORK_TYPE_1xRTT, TelephonyManager.NETWORK_TYPE_IDEN -> "2G"
+            TelephonyManager.NETWORK_TYPE_UMTS, TelephonyManager.NETWORK_TYPE_EVDO_0, TelephonyManager.NETWORK_TYPE_EVDO_A, TelephonyManager.NETWORK_TYPE_HSDPA, TelephonyManager.NETWORK_TYPE_HSUPA, TelephonyManager.NETWORK_TYPE_HSPA, TelephonyManager.NETWORK_TYPE_EVDO_B, TelephonyManager.NETWORK_TYPE_EHRPD, TelephonyManager.NETWORK_TYPE_HSPAP -> "3G"
+            TelephonyManager.NETWORK_TYPE_LTE -> "4G"
+            else -> "Unknown"
+        }
+    }
+
+    private fun getDeviceInfo():BrowserInfo{
+        return BrowserInfo(
+            screen = screenSize,
+            mobile = "yes",
+            os = "android",
+            deviceModel = Build.MODEL,
+            deviceType = Build.TYPE,
+            deviceVendor = Build.BRAND,
+            osVersion = Build.VERSION.CODENAME,
+            cookies = true,
+            connectionStatus = networkType
+        )
+    }
+
+    internal fun getCookiesData() : AdRequestCookies{
+        //
+        val adGroup = JSONObject()
+        val dataBody = JSONObject()
+
+        cookieList?.let {
+            for (item in it){
+                val groupID = JSONObject()
+                val valuesObj = CookiesData(
+                    adServed = item.adServed,
+                    adgroupId = item.adGroupId,
+                    expire = item.expire,
+                    lastAdServed = item.lastAdServed
+                )
+                groupID.put(item.adGroupId.toString(),valuesObj)
+                dataBody.putOpt(null,valuesObj)
+            }
+            adGroup.put("adgroups",dataBody)
+
+        }
+        Log.d(TAG, "getCookiesData_list: ${Gson().toJson(cookieList)}")
+        val  adRequestCookies = AdRequestCookies(adGroup,"impression",null)
+        Log.d(TAG, "getCookiesData_final_obj: ${Gson().toJson(adRequestCookies)}")
+
+        return adRequestCookies
+    }
 }

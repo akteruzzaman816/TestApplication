@@ -18,15 +18,11 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import com.akter.testlibrary.Adfinix.TAG
-import com.akter.testlibrary.model.AdCookies
-import com.akter.testlibrary.model.BrowserInfo
-import com.akter.testlibrary.model.Cookies
 import com.akter.testlibrary.model.ModelAdRequest
 import com.akter.testlibrary.model.ModelAdResponse
 import com.akter.testlibrary.model.SlotInfo
 import com.akter.testlibrary.utils.SharedPref
 import com.akter.testlibrary.utils.TestLibraryConstants
-import com.akter.testlibrary.utils.TestLibraryConstants.fromJsonList
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -113,11 +109,15 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
 
     private fun makeApiCallForAdds() {
         CoroutineScope(Dispatchers.IO).launch {
-            val response = HttpClient.getInstance().getAdData(makeRequest())
-            if (response.isSuccessful){
-                loadAds(response.body())
+            try {
+                val response = HttpClient.getInstance().getAdData(makeRequest())
+                if (response.isSuccessful){
+                    loadAds(response.body())
+                }
+                Log.d(TAG, "response_data: ${Gson().toJson(response.body())}")
+            }catch (e:Exception){
+                Log.d(TAG, "makeApiCallForAdds: _exception ${e.message}")
             }
-            Log.d(TAG, "response_data: ${Gson().toJson(response.body())}")
         }
     }
 
@@ -133,48 +133,11 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
             }
         }
 
-        // save cookies info
-        saveCookies(body?.cookies)
+        // save cookie
+        Adfinix.saveCookiesData(body?.cookies)
+
+
     }
-
-    private fun saveCookies(cookies: AdCookies?) {
-        val cookieData = checkCookiesData(cookies)
-        SharedPref.write(TestLibraryConstants.CACHE_DATA,Gson().toJson(cookieData))
-        Log.d(TAG, "saveCookies: ${Gson().toJson(cookieData)}")
-    }
-
-    private fun checkCookiesData(cookies: AdCookies?): MutableList<AdCookies> {
-        val data = SharedPref.read(TestLibraryConstants.CACHE_DATA,"")
-        var cookiesList:MutableList<AdCookies> = mutableListOf()
-
-        Log.d(TAG, "checkCookiesData: $data")
-
-        if (data?.isNotEmpty() == true) cookiesList = Gson().fromJsonList(data)
-        Log.d(TAG, "checkCookiesData__: ${Gson().toJson(cookiesList)}")
-        for (item in cookiesList)
-//        for (item in cookiesList){
-//            Log.d(TAG, "check-- ${item.adGroupId}")
-//            Log.d(TAG, "checkCookiesData: ${item.adGroupId} => ${cookies?.adGroupId}")
-//            if (item.adGroupId == cookies?.adGroupId){
-//                item.adServed = item.adServed!! + 1
-//                item.lastAdServed = System.currentTimeMillis()
-//                return cookiesList
-//            }
-//        }
-
-        // add cookies to list
-        cookies?.let {
-            it.adServed = 1
-            it.lastAdServed = System.currentTimeMillis()
-            cookiesList.add(it)
-        }
-        return cookiesList
-    }
-
-    private fun sessionCheck(timestamp:Long):Boolean{
-        return true
-    }
-
 
     @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas) {
@@ -190,9 +153,7 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
     }
 
     private fun makeRequest() : ModelAdRequest{
-        val browserInfo = Gson().fromJson(Adfinix.browserInfo, BrowserInfo::class.java)
-        val cookies = Gson().fromJson(Adfinix.cookies, Cookies::class.java)
-        val req = ModelAdRequest(browserInfo,cookies, SlotInfo("",false,siteID,slotID,"adfinix.xyz"))
+        val req = ModelAdRequest(Adfinix.deviceInfo,Adfinix.getCookiesData(), SlotInfo("",false,siteID,slotID,"adfinix.xyz"))
         Log.d(TAG, "ad_request_body: ${Gson().toJson(req)}")
         return req
     }

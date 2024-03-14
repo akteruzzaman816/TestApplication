@@ -8,6 +8,10 @@ class BaseClass : Application() {
     override fun onCreate() {
         super.onCreate()
         // adfinix setup
-        Adfinix.initialize(36,AdfinixAdType.TEST)
+        Adfinix.initialize(
+            context = this,
+            siteID = 36,
+            adType = AdfinixAdType.TEST
+        )
     }
 }
