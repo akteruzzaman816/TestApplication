@@ -22,7 +22,7 @@ object Adfinix {
     internal var adType: AdfinixAdType? = null
     internal var cookieList: MutableList<Cookies>? = null
     private var screenSize = ""
-    private var networkType = ""
+    private var networkType = "4g"
     internal var deviceInfo: BrowserInfo? = null
 
     fun initialize(context: Context, siteID: Int, adType: AdfinixAdType) {

@@ -78,8 +78,14 @@ class AdfinixAds(context: Context, attrs: AttributeSet? = null) :WebView(context
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 if (initialUrl != url && initialUrl.isNotEmpty()){
                     makeApiCallForADClick()
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    context.startActivity(intent)
+                    try {
+                        Log.d(TAG, "onPageStarted: $url")
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                        context.startActivity(intent)
+                    }catch (e:Exception){
+                        Log.d(TAG, "onPageStarted: ${e.message}")
+                    }
+
                     loadUrl(initialUrl)
                 }
             }
