@@ -60,7 +60,7 @@ interface RetrofitApi {
         @Body requestBody: ModelAdActionRequest
     ) : Response<ResponseBody>
 
-    @POST("v1/view")
+    @POST("v1/click")
     suspend fun adClicked(
         @Body requestBody: ModelAdActionRequest
     ) : Response<ResponseBody>

@@ -20,5 +20,6 @@ class MainActivity : AppCompatActivity() {
             Adfinix.showFullScreenAds(this,184)
         }
 
+
     }
 }

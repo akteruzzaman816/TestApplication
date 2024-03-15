@@ -7,6 +7,7 @@ import com.akter.testlibrary.utils.AdfinixAdType
 class BaseClass : Application() {
     override fun onCreate() {
         super.onCreate()
+
         // adfinix setup
         Adfinix.initialize(
             context = this,
