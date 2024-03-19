@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,9 @@
         .ad-container {
             position: relative;
             width: 300px; /* Adjust width as needed */
-            height: 900px; /* Adjust height as needed */
+            height: 250px; /* Adjust height as needed */
             margin: 20px auto;
+            border: 1px solid #ccc;
             overflow: hidden;
         }
 
@@ -18,14 +19,15 @@
             top: 5px;
             right: 5px;
             cursor: pointer;
-            background-color: #FF0000;
+            background-color: #fff;
             padding: 5px;
             border-radius: 50%;
         }
     </style>
 </head>
 <body>
-        <div class="ad-container" id="adContainer">
+    <h1>WebView Communication with Ad Preview</h1>
+    <div class="ad-container" id="adContainer">
         <!-- Ad code or image goes here -->
         <img src="https://w.forfun.com/fetch/62/624e27fde335d49e2dd3c6b75c6027a3.jpeg?h=900&r=0.5" alt="Ad Preview" style="width:100%; height:auto;">
         <div class="close-btn" onclick="closeAd()">X</div>
@@ -33,7 +35,8 @@
 
     <script>
         function closeAd() {
-            sendMessageToAndroid()
+            var adContainer = document.getElementById('adContainer');
+            adContainer.style.display = 'none';
         }
 
         function sendMessageToAndroid() {
@@ -45,7 +48,11 @@
             }
         }
 
-       
+        // Function to receive messages from Android
+        function receiveMessageFromAndroid(message) {
+            console.log("Message from Android:", message);
+            // You can do further processing with the received message
+        }
     </script>
 </body>
 </html>
