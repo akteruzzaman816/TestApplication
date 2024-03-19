@@ -57,23 +57,16 @@
 
     <script>
         function closeAd() {
-            var adContainer = document.getElementById('adContainer');
-            adContainer.style.display = 'none';
+            sendMessageToAndroid()
         }
 
         function sendMessageToAndroid() {
             // Call a function named 'sendMessage' exposed by Android
             if (window.Android) {
-                window.Android.sendMessage("Hello from JavaScript!");
+                window.Android.sendMessage("close ad");
             } else {
                 console.error("Android interface not available.");
             }
-        }
-
-        // Function to receive messages from Android
-        function receiveMessageFromAndroid(message) {
-            console.log("Message from Android:", message);
-            // You can do further processing with the received message
         }
     </script>
 </body>
