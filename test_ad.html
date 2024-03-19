@@ -63,7 +63,7 @@
         function sendMessageToAndroid() {
             // Call a function named 'sendMessage' exposed by Android
             if (window.Android) {
-                window.Android.sendMessage2("close ad");
+                window.Android.sendMessage("close ad");
             } else {
                 console.error("Android interface not available.");
             }
