@@ -3,34 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebView Communication with Ad Preview</title>
+    <title>Fullscreen Ad with Close Button</title>
     <style>
-        .ad-container {
-            position: relative;
-            width: 300px; /* Adjust width as needed */
-            height: 250px; /* Adjust height as needed */
-            margin: 20px auto;
-            border: 1px solid #ccc;
+        body {
+            margin: 0;
             overflow: hidden;
+        }
+
+        .ad-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ad-preview-container {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .ad-preview {
+            width: 100%;
+            height: auto;
         }
 
         .close-btn {
             position: absolute;
-            top: 5px;
-            right: 5px;
+            top: 10px;
+            right: 10px;
             cursor: pointer;
-            background-color: #fff;
-            padding: 5px;
+            color: #fff;
+            font-size: 20px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
             border-radius: 50%;
         }
     </style>
 </head>
 <body>
-    <h1>WebView Communication with Ad Preview</h1>
     <div class="ad-container" id="adContainer">
         <!-- Ad code or image goes here -->
-        <img src="https://w.forfun.com/fetch/62/624e27fde335d49e2dd3c6b75c6027a3.jpeg?h=900&r=0.5" alt="Ad Preview" style="width:100%; height:auto;">
-        <div class="close-btn" onclick="closeAd()">X</div>
+        <div class="ad-preview-container">
+            <img class="ad-preview" src="https://w.forfun.com/fetch/62/624e27fde335d49e2dd3c6b75c6027a3.jpeg?h=900&r=0.5" alt="Ad Preview">
+            <div class="close-btn" onclick="closeAd()">X</div>
+        </div>
     </div>
 
     <script>
